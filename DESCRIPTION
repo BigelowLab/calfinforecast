@@ -1,0 +1,17 @@
+Package: calfin_forecast
+Type: Package
+Title: Serves a subset of ecopmo calfin predictive maps
+Version: 0.0.1
+Author: Ben Tupper <btupper@bigelow.org>
+Maintainer: Ben Tupper <btupper@bigelow.org>
+Description: Serves a subset of ecopmo calfin predictive maps.
+URL: https://github.com/BigelowLab/calfin_forecast
+License: MIT + file LICENSE
+Encoding: UTF-8
+Depends: R (>= 4.2.0)
+Imports:
+  rlang,
+  stars,
+  yaml
+RoxygenNote: 7.3.2
+Roxygen: list(markdown = TRUE)

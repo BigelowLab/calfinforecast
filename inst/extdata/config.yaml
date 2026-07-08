@@ -1,0 +1,69 @@
+species: calfin
+longname: Calanus finmarchicus
+version: v1.01
+class: right whale prey
+note: same as v0/1.00 but using 90th percentile of abudnance as threshold
+verbose: yes
+training_data:
+  species: calfin
+  species_data:
+    ecomon_column: ~
+    alt_source: function
+    function: read_merged
+    threshold:
+      pre: 39725.0
+      post: ~
+  classification:
+    name: patch
+    levels:
+    - 1
+    - 0
+    labels:
+    - '1'
+    - '0'
+  coper_data:
+    vars_static: deptho
+    reg_phys: chfc
+    vars_phys:
+    - temp_bot
+    - mlotst_mld
+    - sal_sur
+    - temp_sur
+    - vel_sur
+    - zos_zos
+    reg_bgc: world
+    vars_bgc: ~
+    vars_time:
+    - day_length
+    - ddx_day_length
+  split:
+    func: rsample::mc_cv
+    prop: 0.75
+    times: 25
+model:
+  seed: 799.0
+  model:
+    name: Boosted Regression Tree
+    engine: xgboost
+    trees: 500.0
+    learn_rate: 0.1
+    tree_depth: 4.0
+    mtry: 5.0
+    min_n: 10.0
+    nthread: 4.0
+    engine_version: 3.2.1.1
+  transformations:
+  - step_log_bathy
+  - step_normalize_numeric
+predict:
+  quantiles:
+  - 0.0
+  - 0.05
+  - 0.25
+  - 0.5
+  - 0.75
+  - 0.95
+  - 1.0
+suggested_threshold:
+  quantile: 0.5
+  threshold: 0.2828283

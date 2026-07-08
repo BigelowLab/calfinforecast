@@ -1,4 +1,4 @@
-Package: calfin_forecast
+Package: calfinforecast
 Type: Package
 Title: Serves a subset of ecopmo calfin predictive maps
 Version: 0.0.1
@@ -12,6 +12,7 @@ Depends: R (>= 4.2.0)
 Imports:
   rlang,
   stars,
+  ggplot2,
   yaml
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)

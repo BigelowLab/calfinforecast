@@ -20,7 +20,7 @@ suppressPackageStartupMessages({
   library(charlier)
 })
 
-Args = argparser::arg_parser("Copy a calfin forecast and make a graphic",
+Args = argparser::arg_parser("Copy an ecomon forecast and make a graphic",
                              name = "copy_forecast.R", 
                              hide.opts = TRUE) |>
   add_argument("--species",
@@ -31,102 +31,35 @@ Args = argparser::arg_parser("Copy a calfin forecast and make a graphic",
                help = "the version",
                default = 'v1.01',
                type = "character") |>
+  add_argument("--start_date",
+               help = "the starting date",
+               default = format(Sys.Date(), '%Y-%m-%d'),
+               type = "character") |>
+  add_argument("--path",
+               help = "the destination path",
+               default = "/mnt/ecocast/corecode/R/ecopmo_forecast/calfin_forecast") |>
   parse_args()
 
-OUTPATH = file.path(Args$path, "inst")
-Args$date = as.Date(Args$date)
-Args$depth = parse_argument(Args$depth)
-Args$variable = parse_argument(Args$variable)
-dates = c(Args$date - 5, Args$date + 10)
-andpath = andreas::copernicus_path(Args$region)
-mwpath = andreas::copernicus_path("mthw")
+OUTPATH = file.path(Args$path, "inst/extdata")
+date = as.Date(Args$start_date, format = '%Y-%m-%d')
+dates = seq(from = date - 5, to = date + 10, by = 'day')
 
-charlier::start_logger(file.path(mwpath, "log"))
+cfg = ecopmodb::read_configuration(species = Args$species,
+                                   version = Args$version)
+#path = ecopmodb::version_path(cfg)
+db  = ecopmodb::read_database(cfg) |>
+  dplyr::filter(per == "day",
+                type == "q050",
+                .data$date %in% dates)
 
-MWDB = mthw::read_database(file.path(mwpath, Args$region)) |>
-  dplyr::filter(depth %in% Args$depth, 
-                name %in% Args$variable)
-CDB = andreas::read_database(andpath, multi = TRUE) |>
-  dplyr::ungroup() |>
-  dplyr::filter(depth %in% Args$depth, 
-                name %in% Args$variable, 
-                period == "day") 
-
-if(FALSE){
-  key = tibble(region = Args$region[1],
-               name = "temp",
-               depth = "sur")
-  grp = filter(MWDB,
-               region == key$region,
-               name == key$name,
-               depth == key$depth)
-}
-
-# Here we perform the computations and saving the package data
-# the function looks outside of its own scope for variables - lazy, I know!
-main = function(){
-  MWDB |>
-    dplyr::group_by(region, name, depth) |>
-    dplyr::group_map(
-      function(grp, key){
-        charlier::info("working on %s %s %s", 
-                       key$region[1],
-                       key$name[1],
-                       key$depth[1])
-        cdb = dplyr::filter(CDB,
-                            name == key$name,
-                            depth == key$depth)
-        mwe = mthw::generate_wave(
-          db = grp,
-          dates = dates,
-          region = key$region,
-          cDB = cdb)
-        mwd = mthw::encode_wave(mwe)
-        filename = mthw_filename(region = key$region,
-                                 variable = key$name,
-                                 depth = key$depth)
-        charlier::info("writing data %s", filename)
-        write_raster(mwd, filename)
-      }, .keep = TRUE)
-  return(0)
-}
-
-# Here we make and save graphics (just for the date)
-# the function looks outside of its own scope for variables - lazy, I know!
-graphics = function() { 
-  for (reg in Args$region){
-    filename = mthw_filename(region = reg, 
-                             variable = "temp",
-                             depth = "sur",
-                             path = OUTPATH)
-    sstd = read_raster(filename) |>
-      slice_date(Args$date)
-    filename = mthw_filename(region = reg, 
-                             variable = "sal",
-                             depth = "sur",
-                             path = OUTPATH)
-    sssd = read_raster(filename) |>
-      slice_date(Args$date)
-    filename = mthw_filename(region = reg, 
-                             variable = "temp",
-                             depth = "bot",
-                             path = OUTPATH)
-    sbtd = read_raster(filename) |>
-      slice_date(Args$date)
-    
-    
-    gg = plot_mwd_list(list(sst = sstd, sss = sssd, sbt = sbtd), # tempd, sald,
-                       title = sprintf("Marine Thermohaline Waves, %s",
-                                       format(Args$date, "%Y-%m-%d")))
-    filename = mthw_filename(region = reg, 
-                             variable = "mwd",
-                             depth = "sur-bot",
-                             extension = ".png",
-                             path = OUTPATH)
-    charlier::info("writing graphics %s", filename)
-    ggplot2::ggsave(filename, plot = gg)
-  }
-  return(0)
+#' Copy the raw data 
+#' @return stars object
+copy_rawdata = function(db, cfg, outpath){
+  rawfiles = ecopmodb::compose_filename(db, cfg)
+  s = stars::read_stars(rawfiles, 
+                        along = list(time = db$date)) |>
+    rlang::set_names("q050")
+  calfinforecast::write_raster(s)
 }
 
 # Here rebuild and install the package then push
@@ -152,8 +85,12 @@ git = function(){
 }
 
 if (!interactive()){
-  r = main()
-  if (r <= 0) r = graphics()
-  if (r <= 0) r = git()
+  s = copy_rawdata(db, cfg, OUTPATH)
+  cfg = calfinforecast::write_config(cfg)
+  gg = calfinforecast::plot_forecast(s,wrap = TRUE) |>
+    calfinforecast::save_graphics()
+  gg = calfinforecast::plot_forecast(s,wrap = FALSE) |>
+    calfinforecast::save_graphics()
+  r = git()
   quit(save = "no", status = r)
 }

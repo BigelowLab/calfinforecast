@@ -58,15 +58,12 @@ db  = ecopmodb::read_database(cfg) |>
 
 #' Copy the raw data 
 #' @return stars object
-copy_rawdata = function(db, cfg, outpath, crop){
+copy_rawdata = function(db, cfg, outpath){
   rawfiles = ecopmodb::compose_filename(db, cfg)
   s = stars::read_stars(rawfiles, 
                         along = list(time = db$date)) |>
     rlang::set_names("q050")
-  if (crop[1] != "none") {
-    cr = calfinforecast::get_bb(crop)
-    s = sf::st_crop(s, cr)
-  }
+
   calfinforecast::write_raster(s)
 }
 
@@ -93,7 +90,7 @@ git = function(){
 }
 
 if (!interactive()){
-  s = copy_rawdata(db, cfg, OUTPATH, CROP)
+  s = copy_rawdata(db, cfg, OUTPATH)
   cfg = calfinforecast::write_config(cfg)
   gg = calfinforecast::plot_forecast(s,wrap = TRUE) |>
     calfinforecast::save_graphics()

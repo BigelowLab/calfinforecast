@@ -4,7 +4,7 @@
 \alias{plot_forecast}
 \title{Plot a forecast}
 \usage{
-plot_forecast(x = read_raster(), wrap = TRUE)
+plot_forecast(x = read_raster(), wrap = TRUE, crop = NULL)
 }
 \arguments{
 \item{x}{stars object}
@@ -12,6 +12,8 @@ plot_forecast(x = read_raster(), wrap = TRUE)
 \item{wrap}{logical, if TRUE create a facet wrapped single image, otherwise
 a list of ggplot objects are returned.  If only one time is provided in
 x then this ignored and a list is returned}
+
+\item{crop}{NULL or bbox to crop the data}
 }
 \value{
 either a single ggplot object (facet wrapped by time) or

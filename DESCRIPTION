@@ -14,6 +14,7 @@ Imports:
   sf,
   stars,
   ggplot2,
+  viridis,
   yaml
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)

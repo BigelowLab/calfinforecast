@@ -85,16 +85,14 @@ save_graphics = function(x = plot_forecast(),
   if (inherits(x, "ggplot")){
     # one item
     ofile = file.path(path, "wrapped.png")
-    ggplot2::ggsave(ofile,
-                    plot = x)
+    suppressMessages(ggplot2::ggsave(ofile, plot = x))
   } else {
     # a named list
     opath = file.path(path, "images")
     ok = lapply(names(x),
       function(nm){
         ofile = file.path(opath, sprintf("%s.png", nm))
-        ggplot2::ggsave(ofile,
-                        plot = x[[nm]])
+        suppressMessages(ggplot2::ggsave(ofile, plot = x[[nm]]))
       })
   }
   invisible(x)

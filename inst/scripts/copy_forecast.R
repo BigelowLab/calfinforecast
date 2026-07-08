@@ -46,7 +46,11 @@ Args = argparser::arg_parser("Copy an ecomon forecast and make a graphic",
 OUTPATH = file.path(Args$path, "inst/extdata")
 date = as.Date(Args$start_date, format = '%Y-%m-%d')
 dates = seq(from = date - 5, to = date + 10, by = 'day')
-CROP = Args$crop
+CROP = if(Args$crop != "none") {
+    calfinforecast::get_bb(Args$crop)
+  } else {
+    NULL
+  }
 
 cfg = ecopmodb::read_configuration(species = Args$species,
                                    version = Args$version)
@@ -92,9 +96,9 @@ git = function(){
 if (!interactive()){
   s = copy_rawdata(db, cfg, OUTPATH)
   cfg = calfinforecast::write_config(cfg)
-  gg = calfinforecast::plot_forecast(s,wrap = TRUE) |>
+  gg = calfinforecast::plot_forecast(s, wrap = TRUE, crop = CROP) |>
     calfinforecast::save_graphics()
-  gg = calfinforecast::plot_forecast(s,wrap = FALSE) |>
+  gg = calfinforecast::plot_forecast(s, wrap = FALSE, crop = CROP) |>
     calfinforecast::save_graphics()
   r = git()
   quit(save = "no", status = r)

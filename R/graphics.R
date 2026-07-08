@@ -18,21 +18,26 @@ plot_forecast = function(x = read_raster(),
   
   if (!is.null(crop)){
     coastline = sf::st_crop(coastline, crop)
-    s = sf::st_crop(s, coastline)
+    s = sf::st_crop(s, crop)
   }
   
   if (wrap){
     gg = ggplot2::ggplot() +
       stars::geom_stars(data = s) +
+      viridis::scale_fill_viridis(limits = c(0,1)) + 
       ggplot2::geom_sf(data = coastline, color = "orange") + 
+      ggplot2::labs(fill = "likelihood", x= "lon", y = "lat") + 
       ggplot2::facet_wrap(~time)
   } else {
     gg = lapply(seq_along(time),
                 function(i){
                   ggplot2::ggplot() +
                     stars::geom_stars(data = dplyr::slice(s, "time", i)) +
+                    viridis::scale_fill_viridis(limits = c(0,1)) + 
                     ggplot2::geom_sf(data = coastline, color = "orange") +  
-                    ggplot2::labs(title = format(time[1], "%Y-%m-%d"))
+                    ggplot2::labs(title = format(time[1], "%Y-%m-%d"),
+                                  fill = "likelihood",
+                                  x= "lon", y = "lat")
                 })
     names(gg) = format(time, "%Y-%m-%d")
     

@@ -38,11 +38,15 @@ Args = argparser::arg_parser("Copy an ecomon forecast and make a graphic",
   add_argument("--path",
                help = "the destination path",
                default = "/mnt/ecocast/corecode/R/ecopmo_forecast/calfinforecast") |>
+  add_argument("--crop",
+               help = "the region to crop to, 'none' to skip cropping",
+               default = "gom") |>
   parse_args()
 
 OUTPATH = file.path(Args$path, "inst/extdata")
 date = as.Date(Args$start_date, format = '%Y-%m-%d')
 dates = seq(from = date - 5, to = date + 10, by = 'day')
+CROP = Args$crop
 
 cfg = ecopmodb::read_configuration(species = Args$species,
                                    version = Args$version)
@@ -54,11 +58,15 @@ db  = ecopmodb::read_database(cfg) |>
 
 #' Copy the raw data 
 #' @return stars object
-copy_rawdata = function(db, cfg, outpath){
+copy_rawdata = function(db, cfg, outpath, crop){
   rawfiles = ecopmodb::compose_filename(db, cfg)
   s = stars::read_stars(rawfiles, 
                         along = list(time = db$date)) |>
     rlang::set_names("q050")
+  if (crop[1] != "none") {
+    cr = calfinforecast::get_bb(crop)
+    s = sf::st_crop(s, cr)
+  }
   calfinforecast::write_raster(s)
 }
 
@@ -85,7 +93,7 @@ git = function(){
 }
 
 if (!interactive()){
-  s = copy_rawdata(db, cfg, OUTPATH)
+  s = copy_rawdata(db, cfg, OUTPATH, CROP)
   cfg = calfinforecast::write_config(cfg)
   gg = calfinforecast::plot_forecast(s,wrap = TRUE) |>
     calfinforecast::save_graphics()

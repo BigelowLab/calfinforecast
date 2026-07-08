@@ -11,6 +11,7 @@ Encoding: UTF-8
 Depends: R (>= 4.2.0)
 Imports:
   rlang,
+  sf,
   stars,
   ggplot2,
   yaml

@@ -24,7 +24,7 @@ plot_forecast = function(x = read_raster(),
   if (wrap){
     gg = ggplot2::ggplot() +
       stars::geom_stars(data = s,
-                        na.rm = TRUE) +
+                        na.action = na.omit) +
       viridis::scale_fill_viridis(limits = c(0,1)) + 
       ggplot2::geom_sf(data = coastline, color = "orange") + 
       ggplot2::labs(fill = "likelihood", x= "lon", y = "lat") + 
@@ -34,7 +34,7 @@ plot_forecast = function(x = read_raster(),
                 function(i){
                   ggplot2::ggplot() +
                     stars::geom_stars(data = dplyr::slice(s, "time", i),
-                                      na.rm = TRUE) +
+                                      na.action = na.omit) +
                     viridis::scale_fill_viridis(limits = c(0,1)) + 
                     ggplot2::geom_sf(data = coastline, color = "orange") +  
                     ggplot2::labs(title = format(time[1], "%Y-%m-%d"),

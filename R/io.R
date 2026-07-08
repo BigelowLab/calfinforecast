@@ -1,10 +1,22 @@
-#' Retrieve the package data path
+#' Retrieve the package or package data path
+#' 
+#' The package path refers to the installed package path, while data path 
+#' refers to the development package data path (inst/extdata). 
+#' 
 #' @export
 #' @param ... file path segments to append to the root path
-#' @param root the root data path
-#' @return package data path
+#' @param root the root package or package data path
+#' @return package or package data path
 data_path = function(...,
-  root =  "/mnt/s1/projects/ecocast/corecode/R/ecopmo_forecast/calfin_forecast/inst/extdata"){
+  root =  "/mnt/s1/projects/ecocast/corecode/R/ecopmo_forecast/calfinforecast/inst/extdata"){
+  file.path(root, ...)
+}
+
+
+#' @export
+#' @rdname data_path
+package_path = function(...,
+  root =  system.file("extdata", package = "calfinforecast")){
   file.path(root, ...)
 }
 

@@ -5,7 +5,7 @@ Version: 0.0.1
 Author: Ben Tupper <btupper@bigelow.org>
 Maintainer: Ben Tupper <btupper@bigelow.org>
 Description: Serves a subset of ecopmo calfin predictive maps.
-URL: https://github.com/BigelowLab/calfin_forecast
+URL: https://github.com/BigelowLab/calfinforecast
 License: MIT + file LICENSE
 Encoding: UTF-8
 Depends: R (>= 4.2.0)

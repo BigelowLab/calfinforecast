@@ -37,7 +37,7 @@ Args = argparser::arg_parser("Copy an ecomon forecast and make a graphic",
                type = "character") |>
   add_argument("--path",
                help = "the destination path",
-               default = "/mnt/ecocast/corecode/R/ecopmo_forecast/calfin_forecast") |>
+               default = "/mnt/ecocast/corecode/R/ecopmo_forecast/calfinforecast") |>
   parse_args()
 
 OUTPATH = file.path(Args$path, "inst/extdata")

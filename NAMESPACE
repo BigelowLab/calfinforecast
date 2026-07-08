@@ -2,6 +2,7 @@
 
 export(data_path)
 export(list_images)
+export(package_path)
 export(plot_forecast)
 export(read_coastline)
 export(read_config)

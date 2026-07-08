@@ -2,22 +2,26 @@
 % Please edit documentation in R/io.R
 \name{data_path}
 \alias{data_path}
-\title{Retrieve the package data path}
+\alias{package_path}
+\title{Retrieve the package or package data path}
 \usage{
 data_path(
   ...,
   root =
-    "/mnt/s1/projects/ecocast/corecode/R/ecopmo_forecast/calfin_forecast/inst/extdata"
+    "/mnt/s1/projects/ecocast/corecode/R/ecopmo_forecast/calfinforecast/inst/extdata"
 )
+
+package_path(..., root = system.file("extdata", package = "calfinforecast"))
 }
 \arguments{
 \item{...}{file path segments to append to the root path}
 
-\item{root}{the root data path}
+\item{root}{the root package or package data path}
 }
 \value{
-package data path
+package or package data path
 }
 \description{
-Retrieve the package data path
+The package path refers to the installed package path, while data path
+refers to the development package data path (inst/extdata).
 }

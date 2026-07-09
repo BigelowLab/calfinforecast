@@ -79,14 +79,21 @@ read_coastline = function(filename = system.file("extdata/coastline.Rds",
 #' @param x either a ggplot object (facte wrapped by time) or a list
 #'   of daily graphics
 #' @param path the path to write to
+#' @param wipe logical, when writing daily files, wipe the exisiting ones first?
+#' @return the inout object
 save_graphics = function(x = plot_forecast(),
-                         path = data_path()){
+                         path = data_path(),
+                         wipe = TRUE){
   
   if (inherits(x, "ggplot")){
     # one item
     ofile = file.path(path, "wrapped.png")
     suppressMessages(ggplot2::ggsave(ofile, plot = x))
   } else {
+    if (wipe){
+      files = list_images("daily")
+      unlink(files)
+    }
     # a named list
     opath = file.path(path, "images")
     ok = lapply(names(x),

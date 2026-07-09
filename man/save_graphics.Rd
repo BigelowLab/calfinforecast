@@ -4,13 +4,18 @@
 \alias{save_graphics}
 \title{Save graphics as PNGs}
 \usage{
-save_graphics(x = plot_forecast(), path = data_path())
+save_graphics(x = plot_forecast(), path = data_path(), wipe = TRUE)
 }
 \arguments{
 \item{x}{either a ggplot object (facte wrapped by time) or a list
 of daily graphics}
 
 \item{path}{the path to write to}
+
+\item{wipe}{logical, when writing daily files, wipe the exisiting ones first?}
+}
+\value{
+the inout object
 }
 \description{
 Save graphics as PNGs

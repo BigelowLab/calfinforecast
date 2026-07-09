@@ -1,5 +1,100 @@
 ---
-title: "README"
-output: html_document
+title: "copernicus"
+output: github_document
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Provides access simplified distribution of [ecopmo forecasts](https://github.com/BigelowLab/ecopmo) forecasts for *Calanus finmarchicus*.
+
+## Requirements
+
+  + [R v4.2+](https://www.r-project.org/)
+  + [rlang](https://CRAN.R-project.org/package=rlang)
+  + [ggplot2](https://CRAN.R-project.org/package=ggplot2)
+  + [viridis](https://CRAN.R-project.org/package=viridis)
+  + [sf](https://CRAN.R-project.org/package=sf)
+  + [stars](https://CRAN.R-project.org/package=stars)
+  + [yaml](https://CRAN.R-project.org/package=yaml)
+  
+
+## Installation
+
+```
+remotes::install_github("BigelowLab/calfinforecast")
+```
+
+## Daily refreshing
+
+Each day the put is refreshed using 
+
+`
+$ Rscript /mnt/s1/projects/ecocast/corecode/R/ecopmo_forecast/calfinforecast/inst/scripts/copy_forecast.R
+`
+
+This copies the most recent forecasts (-5 days to +10 days, although that will vary by available forecast data.)  Makes a copy of the most recent configuration list, saves both a time-faceted forecast plot as well as per day forecast plots.
+
+
+# Functions
+
+Data are stored within the package, so we provide function to easily read these data.
+
+## Rasters
+
+Read the raw forecast data as raster,
+
+```{r}
+library(calfinforecast)
+x = read_raster()
+x
+```
+
+## Spatial cropping
+
+Read in the convenience spatial bounding box.
+
+```{r}
+bb = get_bb(reg = "gom")
+bb
+```
+
+## Configuration
+
+The configuration list may provide important contextual information.
+
+```{r}
+cfg = read_config()
+str(cfg)
+```
+
+## Graphics
+
+Graphics can be composed of one time-facted plot or a collection of per-day plots.
+
+```{r}
+gg1 = plot_forecast(x, wrap = TRUE, crop = get_bb(reg = "gom"))
+gg1
+```
+Alternatively we can retrieve a listing with one graphic per day.
+
+```{r}
+gg2 = plot_forecast(x, wrap = FALSE, crop = get_bb(reg = "gom"))
+gg2[[6]]
+```
+
+## Images 
+
+Each of these is renderded as a PNG.  You can list them...
+
+```{r}
+list_images("wrapped") |>
+  base_name()
+```
+
+```{r}
+list_images("daily") |>
+  base_name()
+```
 

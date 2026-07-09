@@ -4,7 +4,7 @@
 \alias{plot_forecast}
 \title{Plot a forecast}
 \usage{
-plot_forecast(x = read_raster(), wrap = TRUE, crop = NULL)
+plot_forecast(x = read_raster(), wrap = length(dim(x)) > 2, crop = NULL)
 }
 \arguments{
 \item{x}{stars object}

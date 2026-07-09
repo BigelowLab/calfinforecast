@@ -12,6 +12,9 @@ IMAGEFILES = calfinforecast::list_images("daily")
 DATES = names(IMAGEFILES) |> as.Date()
 DATE = Sys.Date()
 ORIGIN = as.Date("1970-01-01")
+WIDTH = "90%"
+HEIGHT = "90%"
+
 ##### UI ######
 
 ui <- shiny::fluidPage(
@@ -36,9 +39,9 @@ ui <- shiny::fluidPage(
                   label = "Date",
                   min = min(DATES), max = max(DATES),
                   value = DATE),
-      plotOutput("imageOutput",
-                  width = "25%",
-                  height = "25%") ,
+      imageOutput("imageOutput",
+                  width = WIDTH,
+                  height = HEIGHT) ,
     bigelowshinytheme::bigelow_footer("Data courtesy of Copernicus Marine Data Store and Ecomon/AZMP")
     ) # card
   ) # main_body
@@ -48,16 +51,14 @@ server <- function(input, output, session) {
   
   output$imageOutput <- renderImage({
     
-    width  <- session$clientData$imageOutput_width
-    height <- session$clientData$imageOutput_height
     date =  as.Date(input$dateSlider, origin = ORIGIN) |> 
       format(format = "%Y-%m-%d")
     
     list(src = IMAGEFILES[date],
-         width  = session$clientData$imageOutput_width,
-         height = session$clientData$imageOutput_height,
+         width  = WIDTH,
+         height = HEIGHT,
          alt = paste("Date", date))
-  }, delete = FALSE)
+  }, delete = TRUE)
   
 }
 

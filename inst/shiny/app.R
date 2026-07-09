@@ -58,7 +58,7 @@ server <- function(input, output, session) {
          width  = WIDTH,
          height = HEIGHT,
          alt = paste("Date", date))
-  }, delete = TRUE)
+  }, delete = FALSE)
   
 }
 

@@ -12,7 +12,7 @@ of daily graphics}
 
 \item{path}{the path to write to}
 
-\item{wipe}{logical, when writing daily files, wipe the exisiting ones first?}
+\item{wipe}{logical, when writing daily files, wipe the existing ones first?}
 }
 \value{
 the inout object

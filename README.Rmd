@@ -28,7 +28,7 @@ remotes::install_github("BigelowLab/calfinforecast")
 
 ## Daily refreshing
 
-Each day the put is refreshed using 
+Each day the repository and package are refreshed using...
 
 `
 $ Rscript /mnt/s1/projects/ecocast/corecode/R/ecopmo_forecast/calfinforecast/inst/scripts/copy_forecast.R
@@ -86,15 +86,25 @@ gg2[[6]]
 
 ## Images 
 
-Each of these is renderded as a PNG.  You can list them...
+Each of these is rendered as a PNG.  You can list them...
 
 ```{r}
 list_images("wrapped") |>
-  base_name()
+  basename()
 ```
 
 ```{r}
 list_images("daily") |>
-  base_name()
+  basename()
+```
+
+## Download raw data
+
+You can download the raw data using this command, and then read it in as a stars object.
+
+```{r download}
+ok = download.file("https://github.com/BigelowLab/calfinforecast/raw/refs/heads/main/inst/extdata/data.Rds", "data.Rds")
+x = readRDS("data.Rds")
+x
 ```
 

@@ -14,6 +14,8 @@ DATE = Sys.Date()
 ORIGIN = as.Date("1970-01-01")
 WIDTH = "90%"
 HEIGHT = "90%"
+#SITES = calfinforecast::read_dmr_gzmp()
+
 
 ##### UI ######
 

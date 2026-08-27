@@ -4,7 +4,12 @@
 \alias{plot_forecast}
 \title{Plot a forecast}
 \usage{
-plot_forecast(x = read_raster(), wrap = length(dim(x)) > 2, crop = NULL)
+plot_forecast(
+  x = read_raster(),
+  wrap = length(dim(x)) > 2,
+  crop = NULL,
+  add_sites = !wrap
+)
 }
 \arguments{
 \item{x}{stars object}
@@ -14,6 +19,8 @@ a list of ggplot objects are returned.  If only one time is provided in
 x then this ignored and a list is returned}
 
 \item{crop}{NULL or bbox to crop the data}
+
+\item{add_sites}{logical, if TRUE add site locations as open circles}
 }
 \value{
 either a single ggplot object (facet wrapped by time) or

@@ -6,11 +6,13 @@
 #'   a list of ggplot objects are returned.  If only one time is provided in 
 #'   x then this ignored and a list is returned
 #' @param crop NULL or bbox to crop the data
+#' @param add_sites logical, if TRUE add site locations as open circles
 #' @return either a single ggplot object (facet wrapped by time) or 
 #'   a list of ggplot objects (one per unit of time)
 plot_forecast = function(x = read_raster(),
                          wrap = length(dim(x)) > 2,
-                         crop = NULL){
+                         crop = NULL,
+                         add_sites = !wrap){
   coastline = read_coastline()
  
   
@@ -24,7 +26,9 @@ plot_forecast = function(x = read_raster(),
   } else {
     time = stars::st_get_dimension_values(x, "time")
   }
-  
+  sites = read_dmr_gzmp()
+  site_shape = "circle open"
+  site_color = "white"
   if (wrap){
     gg = ggplot2::ggplot() +
       stars::geom_stars(data = x,
@@ -33,10 +37,16 @@ plot_forecast = function(x = read_raster(),
       ggplot2::geom_sf(data = coastline, color = "orange") + 
       ggplot2::labs(fill = "likelihood", x= "lon", y = "lat") + 
       ggplot2::facet_wrap(~time)
+    if (add_sites){
+      gg = gg + 
+        ggplot2::geom_sf(data = sites, 
+                         shape = site_shape, 
+                         color = site_color)
+    }
   } else {
     gg = lapply(seq_along(time),
                 function(i){
-                  ggplot2::ggplot() +
+                  g = ggplot2::ggplot() +
                     stars::geom_stars(data = dplyr::slice(x, "time", i),
                                       na.action = na.omit) +
                     viridis::scale_fill_viridis(limits = c(0,1)) + 
@@ -44,9 +54,15 @@ plot_forecast = function(x = read_raster(),
                     ggplot2::labs(title = format(time[i], "%Y-%m-%d"),
                                   fill = "likelihood",
                                   x= "lon", y = "lat")
+                  if (add_sites){
+                    g = g + 
+                      ggplot2::geom_sf(data = sites, 
+                                       shape = site_shape, 
+                                       color = site_color)
+                  }
+                  return(g)
                 })
     names(gg) = format(time, "%Y-%m-%d")
-    
   }
   invisible(gg)
 }

@@ -72,6 +72,20 @@ read_coastline = function(filename = system.file("extdata/coastline.Rds",
   readRDS(filename[1])
 }
 
+#' Read a DMR GZMP site metadata
+#'  
+#' @export
+#' @param filename str, the filename
+#' @param form chr, one of "data.frame" or "sf" (default)
+#' @return sf object
+read_dmr_gzmp = function(filename = system.file("extdata/dmr_gzmp_sites.Rds",
+                                                 package = "calfinforecast"),
+                         form = c("data.frame", "sf")[2]){
+  x = readRDS(filename[1])
+  if (tolower(form[1]) == "sf") x = sf::st_as_sf(x, coords = c("X", "Y"), crs = 4326) 
+  x
+}
+
 
 #' Save graphics as PNGs
 #' 

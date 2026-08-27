@@ -7,15 +7,22 @@
 #'   x then this ignored and a list is returned
 #' @param crop NULL or bbox to crop the data
 #' @param add_sites logical, if TRUE add site locations as open circles
+#' @param add_zones logical, if TRUE add lobster zones
 #' @return either a single ggplot object (facet wrapped by time) or 
 #'   a list of ggplot objects (one per unit of time)
 plot_forecast = function(x = read_raster(),
                          wrap = length(dim(x)) > 2,
                          crop = NULL,
-                         add_sites = !wrap){
+                         add_sites = !wrap,
+                         add_zones = add_sites){
   coastline = read_coastline()
- 
+  sites = read_dmr_gzmp()
+  site_shape = "circle open"
+  site_color = "white"
+  zones = read_dmr_zones()
+  zone_color = "gray"
   
+    
   if (!is.null(crop)){
     coastline = sf::st_crop(coastline, crop)
     x = st_crop(x, crop)
@@ -26,9 +33,8 @@ plot_forecast = function(x = read_raster(),
   } else {
     time = stars::st_get_dimension_values(x, "time")
   }
-  sites = read_dmr_gzmp()
-  site_shape = "circle open"
-  site_color = "white"
+
+  
   if (wrap){
     gg = ggplot2::ggplot() +
       stars::geom_stars(data = x,
@@ -36,7 +42,13 @@ plot_forecast = function(x = read_raster(),
       viridis::scale_fill_viridis(limits = c(0,1)) + 
       ggplot2::geom_sf(data = coastline, color = "orange") + 
       ggplot2::labs(fill = "likelihood", x= "lon", y = "lat") + 
+      #ggplot2::coord_sf() + 
       ggplot2::facet_wrap(~time)
+    if (add_zones){
+      gg = gg + 
+        ggplot2::geom_sf(data = zones,
+                         color = zone_color)
+    }
     if (add_sites){
       gg = gg + 
         ggplot2::geom_sf(data = sites, 
@@ -53,7 +65,13 @@ plot_forecast = function(x = read_raster(),
                     ggplot2::geom_sf(data = coastline, color = "orange") +  
                     ggplot2::labs(title = format(time[i], "%Y-%m-%d"),
                                   fill = "likelihood",
-                                  x= "lon", y = "lat")
+                                  x= "lon", y = "lat")# + 
+                    #ggplot2::coord_sf()
+                  if (add_zones){
+                    g = g + 
+                      ggplot2::geom_sf(data = zones,
+                                       color = zone_color)
+                  }
                   if (add_sites){
                     g = g + 
                       ggplot2::geom_sf(data = sites, 

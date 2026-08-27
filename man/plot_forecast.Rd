@@ -8,7 +8,8 @@ plot_forecast(
   x = read_raster(),
   wrap = length(dim(x)) > 2,
   crop = NULL,
-  add_sites = !wrap
+  add_sites = !wrap,
+  add_zones = add_sites
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ x then this ignored and a list is returned}
 \item{crop}{NULL or bbox to crop the data}
 
 \item{add_sites}{logical, if TRUE add site locations as open circles}
+
+\item{add_zones}{logical, if TRUE add lobster zones}
 }
 \value{
 either a single ggplot object (facet wrapped by time) or

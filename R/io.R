@@ -86,6 +86,15 @@ read_dmr_gzmp = function(filename = system.file("extdata/dmr_gzmp_sites.Rds",
   x
 }
 
+#' Read a DMR lobster zones
+#'  
+#' @export
+#' @param filename str, the filename
+#' @return sf object
+read_dmr_zones = function(filename = system.file("extdata/dmr_lobster_zones.Rds",
+                                                package = "calfinforecast")){
+  readRDS(filename[1])
+}
 
 #' Save graphics as PNGs
 #' 
